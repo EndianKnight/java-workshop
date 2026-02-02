@@ -1,41 +1,30 @@
 apiVersion: 1
 
 datasources:
+  # Prometheus - Metrics
   - name: Prometheus
     type: prometheus
     access: proxy
     url: http://prometheus:9090
+    uid: prometheus
     isDefault: true
-    editable: false
+    editable: true
 
+  # Loki - Logs
   - name: Loki
     type: loki
     access: proxy
     url: http://loki:3100
-    editable: false
-    jsonData:
-      derivedFields:
-        - datasourceUid: tempo
-          matcherRegex: '"traceId":"(\w+)"'
-          name: TraceID
-          url: '$${__value.raw}'
+    uid: loki
+    editable: true
 
+  # Tempo - Traces
   - name: Tempo
     type: tempo
     access: proxy
     url: http://tempo:3200
     uid: tempo
-    editable: false
+    editable: true
     jsonData:
-      tracesToLogs:
-        datasourceUid: loki
-        tags: ['service.name']
-        mappedTags: [{ key: 'service.name', value: 'service_name' }]
-        mapTagNamesEnabled: true
-        filterByTraceID: true
-      serviceMap:
-        datasourceUid: prometheus
       nodeGraph:
         enabled: true
-      lokiSearch:
-        datasourceUid: loki
