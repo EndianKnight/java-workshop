@@ -1,6 +1,6 @@
 # 🚀 Java Workshop
 
-A production-ready **Spring Boot 4.1** workshop project showcasing modern Java 21 development practices with Docker, PostgreSQL, and Prometheus monitoring.
+A production-ready **Spring Boot 4.1** workshop project showcasing modern Java 21 development practices with Docker, PostgreSQL, and full observability stack.
 
 ---
 
@@ -11,10 +11,11 @@ A production-ready **Spring Boot 4.1** workshop project showcasing modern Java 2
 | 🏗️ **Spring Boot 4.1** | Latest snapshot with WebMVC, JPA, and Actuator |
 | ☕ **Java 21** | Modern Java with records, virtual threads support |
 | 🐘 **PostgreSQL** | Robust relational database with Docker integration |
-| 📊 **Prometheus** | Metrics collection and monitoring out-of-the-box |
-| 🐳 **Docker Compose** | One-command infrastructure setup |
-| 🔍 **Actuator** | Health checks, metrics, and production readiness |
-| 📝 **Structured Logging** | JSON logging with Logstash encoder |
+| 📊 **Grafana Dashboards** | Pre-built JVM and HTTP metrics dashboards |
+| � **OpenTelemetry** | Distributed tracing with Tempo |
+| � **Loki** | Centralized log aggregation |
+| 📈 **Prometheus** | Metrics collection and monitoring |
+| � **Docker Compose** | One-command infrastructure setup |
 
 ---
 
@@ -28,23 +29,21 @@ A production-ready **Spring Boot 4.1** workshop project showcasing modern Java 2
 
 ## 🚀 Quick Start
 
-### Option 1: Run with Docker Compose (Recommended)
+### Option 1: Run Everything with Docker Compose (Recommended)
 
 ```bash
-# Start all services (app + PostgreSQL + Prometheus)
+# Start all services (app + database + observability stack)
 docker compose up -d
 
-# View logs
+# View application logs
 docker compose logs -f workshop
 ```
 
-The application will be available at: **http://localhost:8080**
-
-### Option 2: Run Locally with Maven
+### Option 2: Run App Locally with Maven
 
 ```bash
-# Start PostgreSQL first
-docker compose up -d postgres
+# Start infrastructure services
+docker compose up -d postgres grafana prometheus loki tempo otel-collector
 
 # Run the application
 ./mvnw spring-boot:run
@@ -54,19 +53,76 @@ docker compose up -d postgres
 
 ## 🔗 Endpoints
 
+### Application
+
 | Endpoint | Description |
 |----------|-------------|
-| `http://localhost:8080` | Application root |
-| `http://localhost:8080/actuator/health` | Health check |
-| `http://localhost:8080/actuator/prometheus` | Prometheus metrics |
-| `http://localhost:8080/actuator/info` | Application info |
-| `http://localhost:9090` | Prometheus UI |
+| http://localhost:8080 | Application root |
+| http://localhost:8080/actuator/health | Health check |
+| http://localhost:8080/actuator/prometheus | Prometheus metrics |
+| http://localhost:8080/actuator/info | Application info |
+
+### Observability Stack
+
+| Service | URL | Credentials |
+|---------|-----|-------------|
+| **Grafana** | http://localhost:3000 | admin / admin |
+| **Prometheus** | http://localhost:9090 | - |
+| **Loki** | http://localhost:3100 | - |
+| **Tempo** | http://localhost:3200 | - |
+
+---
+
+## 📊 Grafana Dashboards
+
+Pre-built dashboards are automatically provisioned:
+
+### JVM Metrics Dashboard
+- Heap memory usage
+- Thread counts (live, daemon, peak)
+- Garbage collection pause times
+- CPU usage (process and system)
+
+### HTTP Metrics Dashboard
+- Request rate by endpoint
+- Response time percentiles (p50, p95, p99)
+- Error counts by status code
+
+**Access**: Grafana → Dashboards → Workshop folder
+
+---
+
+## 🔭 Observability Architecture
+
+```
+┌─────────────────┐     OTLP      ┌──────────────────┐
+│  Spring Boot    │──────────────►│  OTEL Collector  │
+│  Application    │               └────────┬─────────┘
+└─────────────────┘                        │
+                                           ▼
+                    ┌──────────────────────┼──────────────────────┐
+                    │                      │                      │
+                    ▼                      ▼                      ▼
+             ┌──────────┐          ┌──────────┐          ┌──────────┐
+             │ Prometheus│          │   Loki   │          │  Tempo   │
+             │ (Metrics) │          │  (Logs)  │          │ (Traces) │
+             └─────┬─────┘          └────┬─────┘          └────┬─────┘
+                   │                     │                     │
+                   └─────────────────────┼─────────────────────┘
+                                         ▼
+                                  ┌──────────────┐
+                                  │   Grafana    │
+                                  │ (Dashboards) │
+                                  └──────────────┘
+```
 
 ---
 
 ## ⚙️ Configuration
 
-The application uses type-safe configuration via `AppConfig` record. Customize in `application.properties`:
+### Application Settings
+
+Customize in `application.properties`:
 
 ```properties
 # Application Settings
@@ -77,75 +133,29 @@ app.version=1.0.0
 # Server Settings
 app.server.port=8080
 app.server.context-path=/
-app.server.connection-timeout=60000
-app.server.max-connections=10000
 ```
 
-### Environment Variables
+### OpenTelemetry Settings
 
-Override settings via environment variables:
-
-```bash
-export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/workshop
-export SPRING_DATASOURCE_USERNAME=workshop
-export SPRING_DATASOURCE_PASSWORD=workshop
+```properties
+# Tracing
+management.tracing.sampling.probability=1.0
+management.otlp.tracing.endpoint=http://localhost:4318/v1/traces
 ```
 
 ---
 
-## 🐳 Docker
+## 🐳 Docker Services
 
-### Build Image
-
-```bash
-# Build with multi-stage Dockerfile
-docker build -t workshop:latest .
-```
-
-### Run Container
-
-```bash
-docker run -p 8080:8080 \
-  -e SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/workshop \
-  workshop:latest
-```
-
----
-
-## 📊 Monitoring
-
-### Prometheus
-
-Prometheus is pre-configured to scrape metrics from the application:
-
-```yaml
-# prometheus.yml
-scrape_configs:
-  - job_name: 'workshop'
-    static_configs:
-      - targets: ['workshop:8080']
-```
-
-Access Prometheus UI at: **http://localhost:9090**
-
-### Available Metrics
-
-- JVM metrics (memory, GC, threads)
-- HTTP request metrics
-- Database connection pool metrics
-- Custom application metrics
-
----
-
-## 🧪 Testing
-
-```bash
-# Run tests
-./mvnw test
-
-# Run tests with coverage
-./mvnw test jacoco:report
-```
+| Container | Image | Ports |
+|-----------|-------|-------|
+| workshop-app | Built from Dockerfile | 8080 |
+| workshop-postgres | postgres:16-alpine | 5432 |
+| workshop-grafana | grafana/grafana | 3000 |
+| workshop-prometheus | prom/prometheus | 9090 |
+| workshop-loki | grafana/loki | 3100 |
+| workshop-tempo | grafana/tempo | 3200 |
+| workshop-otel-collector | otel/opentelemetry-collector-contrib | 4317, 4318, 8889 |
 
 ---
 
@@ -153,20 +163,19 @@ Access Prometheus UI at: **http://localhost:9090**
 
 ```
 java-workshop/
-├── src/
-│   ├── main/
-│   │   ├── java/com/bootstrap/workshop/
-│   │   │   ├── WorkshopApplication.java    # Main entry point
-│   │   │   └── config/
-│   │   │       └── AppConfig.java          # Type-safe configuration
-│   │   └── resources/
-│   │       └── application.properties      # App configuration
-│   └── test/                               # Test sources
-├── compose.yaml                            # Docker Compose setup
-├── Dockerfile                              # Multi-stage Docker build
-├── prometheus.yml                          # Prometheus config
-├── pom.xml                                 # Maven dependencies
-└── mvnw                                    # Maven Wrapper
+├── src/main/java/com/bootstrap/workshop/
+│   ├── WorkshopApplication.java      # Main entry point
+│   └── config/AppConfig.java         # Type-safe configuration
+├── observability/
+│   ├── otel-collector-config.yaml    # OTEL Collector pipeline
+│   ├── tempo-config.yaml             # Tempo tracing config
+│   └── grafana/
+│       ├── provisioning/             # Auto-provisioned datasources
+│       └── dashboards/               # Pre-built dashboards
+├── compose.yaml                       # Docker Compose setup
+├── Dockerfile                         # Multi-stage Docker build
+├── prometheus.yml                     # Prometheus scrape config
+└── pom.xml                           # Maven dependencies
 ```
 
 ---
@@ -178,9 +187,11 @@ java-workshop/
 | Spring Boot | 4.1.0-SNAPSHOT | Application framework |
 | Java | 21 | Language runtime |
 | PostgreSQL | 16 | Database |
-| Prometheus | Latest | Metrics & monitoring |
-| Lombok | Latest | Boilerplate reduction |
-| Logstash Encoder | 8.0 | Structured JSON logging |
+| Grafana | Latest | Dashboards & visualization |
+| Prometheus | Latest | Metrics collection |
+| Loki | Latest | Log aggregation |
+| Tempo | Latest | Distributed tracing |
+| OpenTelemetry | 1.45.0 | Observability standard |
 
 ---
 
