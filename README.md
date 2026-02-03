@@ -139,8 +139,8 @@ java-workshop/
 | Phase 1: Project Setup | ✅ Complete | Spring Boot 4.1, PostgreSQL, Prometheus |
 | Phase 2: Observability | ✅ Complete | Grafana, Loki, Tempo, dashboards |
 | Phase 3: Entity & Repository | ✅ Complete | Entities, repositories, migrations, 44 tests |
-| **Phase 4: Service Layer** | 🚧 In Progress | UserService, WalletService, TransactionService |
-| Phase 5: Controllers | ⏳ Planned | REST endpoints |
+| Phase 4: Service Layer | ✅ Complete | UserService, WalletService, TransactionService, 71 tests |
+| **Phase 5: Controllers** | 🚧 Next | REST endpoints |
 | Phase 6: Security | ⏳ Planned | JWT, roles, BCrypt |
 
 **Run tests**: `./run-tests.sh`

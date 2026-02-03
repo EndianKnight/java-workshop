@@ -10,8 +10,8 @@
 
 ## Restart Point
 **Last Updated:** 2026-02-03  
-**Current Focus:** Phase 4 - Service Layer  
-**Next Task:** Create UserService, WalletService, TransactionService
+**Current Focus:** Phase 5 - Controllers  
+**Next Task:** Create AuthController, UserController, WalletController, TransactionController
 
 ---
 
@@ -42,18 +42,20 @@
 
 ---
 
-## Current Sprint
-
 ### Phase 4: Service Layer
-- [ ] `UserService` - CRUD operations
-- [ ] `WalletService` - balance, deposit, withdraw (**with locking**)
-- [ ] `TransactionService` - transfer with **SERIALIZABLE isolation**
-- [ ] Wallet address generation (16-char hex)
-- [ ] Idempotency handling for transactions
-- [ ] **Unit Tests:**
-  - [ ] `UserServiceTest` - register, update, delete, findById
-  - [ ] `WalletServiceTest` - deposit, withdraw, balance, concurrency
-  - [ ] `TransactionServiceTest` - transfer, insufficient balance, idempotency
+- [x] `UserService` - CRUD operations
+- [x] `WalletService` - balance, deposit, withdraw (**with locking**)
+- [x] `TransactionService` - transfer with **SERIALIZABLE isolation**
+- [x] Wallet address generation (16-char hex)
+- [x] Idempotency handling for transactions
+- [x] **Unit Tests:**
+  - [x] `UserServiceTest` - register, update, delete, findById
+  - [x] `WalletServiceTest` - deposit, withdraw, balance, concurrency
+  - [x] `TransactionServiceTest` - transfer, insufficient balance, idempotency
+
+---
+
+## Current Sprint
 
 ### Phase 5: Controllers
 - [ ] `AuthController` - login, register
@@ -113,3 +115,4 @@
 | 2026-02-02 | Project setup, observability stack |
 | 2026-02-03 | Specs created, NFRs for consistency & throughput |
 | 2026-02-03 | Phase 3: Entities, repositories, Flyway migrations, unit tests (44 tests) |
+| 2026-02-03 | Phase 4: Services, DTOs, exceptions, unit tests (71 total tests) |
