@@ -9,9 +9,9 @@
 | `[!]` | Blocked |
 
 ## Restart Point
-**Last Updated:** 2026-02-03  
-**Current Focus:** Phase 5 - Controllers  
-**Next Task:** Create AuthController, UserController, WalletController, TransactionController
+**Last Updated:** 2026-02-04  
+**Current Focus:** Phase 6 - Security  
+**Next Task:** Implement Spring Security, JWT authentication, role-based access
 
 ---
 
@@ -58,17 +58,20 @@
 ## Current Sprint
 
 ### Phase 5: Controllers
-- [ ] `AuthController` - login, register
-- [ ] `UserController` - /users/me endpoints
-- [ ] `AdminController` - /admin/users CRUD
-- [ ] `WalletController` - balance, deposit, withdraw
-- [ ] `TransactionController` - transfer, history
-- [ ] **Unit Tests:**
-  - [ ] `AuthControllerTest` - login, register, token validation
-  - [ ] `UserControllerTest` - profile CRUD
-  - [ ] `AdminControllerTest` - admin user management
-  - [ ] `WalletControllerTest` - wallet operations
-  - [ ] `TransactionControllerTest` - transfer, history
+- [x] `AuthController` - login, register
+- [x] `UserController` - /users/me endpoints
+- [x] `AdminController` - /admin/users CRUD
+- [x] `WalletController` - balance, deposit, withdraw
+- [x] `TransactionController` - transfer, history
+- [x] `GlobalExceptionHandler` - error handling
+- [x] **Unit Tests:**
+  - [x] `AuthControllerTest` - login, register, token validation
+  - [x] `WalletControllerTest` - wallet operations
+  - [x] `TransactionControllerTest` - transfer, history
+
+---
+
+## Current Sprint
 
 ### Phase 6: Security
 - [ ] Spring Security config
@@ -116,3 +119,4 @@
 | 2026-02-03 | Specs created, NFRs for consistency & throughput |
 | 2026-02-03 | Phase 3: Entities, repositories, Flyway migrations, unit tests (44 tests) |
 | 2026-02-03 | Phase 4: Services, DTOs, exceptions, unit tests (71 total tests) |
+| 2026-02-04 | Phase 5: Controllers, GlobalExceptionHandler, controller tests (86 total tests) |

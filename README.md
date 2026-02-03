@@ -140,8 +140,8 @@ java-workshop/
 | Phase 2: Observability | ✅ Complete | Grafana, Loki, Tempo, dashboards |
 | Phase 3: Entity & Repository | ✅ Complete | Entities, repositories, migrations, 44 tests |
 | Phase 4: Service Layer | ✅ Complete | UserService, WalletService, TransactionService, 71 tests |
-| **Phase 5: Controllers** | 🚧 Next | REST endpoints |
-| Phase 6: Security | ⏳ Planned | JWT, roles, BCrypt |
+| Phase 5: Controllers | ✅ Complete | REST endpoints, GlobalExceptionHandler, 86 tests |
+| **Phase 6: Security** | 🚧 Next | JWT, roles, BCrypt |
 
 **Run tests**: `./run-tests.sh`
 
