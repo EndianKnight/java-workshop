@@ -132,13 +132,28 @@ java-workshop/
 
 ---
 
+## 🎯 Current Sprint
+
+| Phase | Status | Progress |
+|-------|--------|----------|
+| Phase 1: Project Setup | ✅ Complete | Spring Boot 4.1, PostgreSQL, Prometheus |
+| Phase 2: Observability | ✅ Complete | Grafana, Loki, Tempo, dashboards |
+| Phase 3: Entity & Repository | ✅ Complete | Entities, repositories, migrations, 44 tests |
+| **Phase 4: Service Layer** | 🚧 In Progress | UserService, WalletService, TransactionService |
+| Phase 5: Controllers | ⏳ Planned | REST endpoints |
+| Phase 6: Security | ⏳ Planned | JWT, roles, BCrypt |
+
+**Run tests**: `./run-tests.sh`
+
+---
+
 ## 📋 Documentation
 
-| Doc | Purpose |
-|-----|---------|
-| [requirements.md](specifications/requirements.md) | Features & NFRs |
-| [design.md](specifications/design.md) | Architecture & APIs |
-| [tasks.md](specifications/tasks.md) | Implementation status |
+| Document | Description |
+|----------|-------------|
+| 📄 [Requirements](specifications/requirements.md) | Features, NFRs, security requirements |
+| 🏛️ [Design](specifications/design.md) | Domain model, APIs, consistency design |
+| ✅ [Tasks](specifications/tasks.md) | Implementation checklist with status |
 
 ---
 
