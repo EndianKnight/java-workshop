@@ -55,8 +55,6 @@
 
 ---
 
-## Current Sprint
-
 ### Phase 5: Controllers
 - [x] `AuthController` - login, register
 - [x] `UserController` - /users/me endpoints
@@ -65,8 +63,8 @@
 - [x] `TransactionController` - transfer, history
 - [x] `GlobalExceptionHandler` - error handling
 - [x] **Unit Tests:**
-  - [x] `AuthControllerTest` - login, register, token validation
-  - [x] `WalletControllerTest` - wallet operations
+  - [x] `AuthControllerTest` - register, login, validation
+  - [x] `WalletControllerTest` - balance, deposit, withdraw
   - [x] `TransactionControllerTest` - transfer, history
 
 ---
