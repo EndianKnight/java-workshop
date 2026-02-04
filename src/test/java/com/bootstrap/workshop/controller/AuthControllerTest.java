@@ -3,26 +3,34 @@ package com.bootstrap.workshop.controller;
 import com.bootstrap.workshop.dto.UserRegistrationRequest;
 import com.bootstrap.workshop.dto.UserResponse;
 import com.bootstrap.workshop.entity.Role;
+import com.bootstrap.workshop.entity.User;
 import com.bootstrap.workshop.exception.UserAlreadyExistsException;
+import com.bootstrap.workshop.repository.UserRepository;
+import com.bootstrap.workshop.security.JwtService;
 import com.bootstrap.workshop.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AuthController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @Import(ControllerTestConfig.class)
 @DisplayName("AuthController")
 class AuthControllerTest {
@@ -32,6 +40,15 @@ class AuthControllerTest {
 
     @MockitoBean
     private UserService userService;
+
+    @MockitoBean
+    private UserRepository userRepository;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -108,17 +125,24 @@ class AuthControllerTest {
                 }
                 """;
 
-        UserResponse response = new UserResponse(
+        User user = new User("test@example.com", "Test User", "$2a$10$hashedpassword", "Test Bank", "ACC123",
+                "123 Test St");
+        user.setId(1L);
+
+        UserResponse userResponse = new UserResponse(
                 1L, "test@example.com", "Test User", "Test Bank",
                 "ACC123", "123 Test St", Role.USER, LocalDateTime.now(), "abc123def4567890");
 
-        when(userService.findByEmail("test@example.com")).thenReturn(response);
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+        when(jwtService.generateToken(any(User.class))).thenReturn("test-jwt-token");
+        when(userService.findByEmail("test@example.com")).thenReturn(userResponse);
 
         mockMvc.perform(post("/api/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(loginRequest))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").exists())
+                .andExpect(jsonPath("$.token").value("test-jwt-token"))
                 .andExpect(jsonPath("$.user.email").value("test@example.com"));
     }
 }

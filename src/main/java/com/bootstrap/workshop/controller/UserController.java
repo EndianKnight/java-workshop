@@ -2,11 +2,13 @@ package com.bootstrap.workshop.controller;
 
 import com.bootstrap.workshop.dto.UserResponse;
 import com.bootstrap.workshop.dto.UserUpdateRequest;
+import com.bootstrap.workshop.entity.User;
 import com.bootstrap.workshop.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -24,16 +26,11 @@ public class UserController {
     /**
      * Get current user's profile.
      * GET /api/v1/users/me
-     * Note: User ID will come from JWT in Phase 6
      */
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> getProfile(@RequestHeader(value = "X-User-Id", required = false) Long userId) {
-        // TODO: Get userId from JWT token in Phase 6
-        if (userId == null) {
-            userId = 1L; // Placeholder for testing
-        }
-        log.info("Get profile for user: {}", userId);
-        UserResponse response = userService.findById(userId);
+    public ResponseEntity<UserResponse> getProfile(@AuthenticationPrincipal User user) {
+        log.info("Get profile for user: {}", user.getId());
+        UserResponse response = userService.findById(user.getId());
         return ResponseEntity.ok(response);
     }
 
@@ -43,14 +40,10 @@ public class UserController {
      */
     @PutMapping("/me")
     public ResponseEntity<UserResponse> updateProfile(
-            @RequestHeader(value = "X-User-Id", required = false) Long userId,
+            @AuthenticationPrincipal User user,
             @Valid @RequestBody UserUpdateRequest request) {
-        // TODO: Get userId from JWT token in Phase 6
-        if (userId == null) {
-            userId = 1L;
-        }
-        log.info("Update profile for user: {}", userId);
-        UserResponse response = userService.update(userId, request);
+        log.info("Update profile for user: {}", user.getId());
+        UserResponse response = userService.update(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -59,13 +52,9 @@ public class UserController {
      * DELETE /api/v1/users/me
      */
     @DeleteMapping("/me")
-    public ResponseEntity<Void> deleteAccount(@RequestHeader(value = "X-User-Id", required = false) Long userId) {
-        // TODO: Get userId from JWT token in Phase 6
-        if (userId == null) {
-            userId = 1L;
-        }
-        log.info("Delete account for user: {}", userId);
-        userService.delete(userId);
+    public ResponseEntity<Void> deleteAccount(@AuthenticationPrincipal User user) {
+        log.info("Delete account for user: {}", user.getId());
+        userService.delete(user.getId());
         return ResponseEntity.noContent().build();
     }
 }

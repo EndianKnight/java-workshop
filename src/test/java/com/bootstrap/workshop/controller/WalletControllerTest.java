@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -25,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(WalletController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @Import(ControllerTestConfig.class)
 @DisplayName("WalletController")
 class WalletControllerTest {
@@ -46,8 +48,7 @@ class WalletControllerTest {
 
                 when(walletService.getBalance(1L)).thenReturn(response);
 
-                mockMvc.perform(get("/api/v1/wallet")
-                                .header("X-User-Id", "1"))
+                mockMvc.perform(get("/api/v1/wallet"))
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.address").value("abc123def4567890"))
                                 .andExpect(jsonPath("$.balance").value(1000));
@@ -56,10 +57,9 @@ class WalletControllerTest {
         @Test
         @DisplayName("GET /api/v1/wallet - should return 404 when wallet not found")
         void shouldReturn404WhenWalletNotFound() throws Exception {
-                when(walletService.getBalance(99L)).thenThrow(new WalletNotFoundException(99L));
+                when(walletService.getBalance(1L)).thenThrow(new WalletNotFoundException(1L));
 
-                mockMvc.perform(get("/api/v1/wallet")
-                                .header("X-User-Id", "99"))
+                mockMvc.perform(get("/api/v1/wallet"))
                                 .andExpect(status().isNotFound())
                                 .andExpect(jsonPath("$.error").value("Not Found"));
         }
@@ -74,7 +74,6 @@ class WalletControllerTest {
                 when(walletService.deposit(eq(1L), any())).thenReturn(response);
 
                 mockMvc.perform(post("/api/v1/wallet/deposit")
-                                .header("X-User-Id", "1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                                 .andExpect(status().isOk())
@@ -91,7 +90,6 @@ class WalletControllerTest {
                 when(walletService.withdraw(eq(1L), any())).thenReturn(response);
 
                 mockMvc.perform(post("/api/v1/wallet/withdraw")
-                                .header("X-User-Id", "1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                                 .andExpect(status().isOk())
@@ -108,7 +106,6 @@ class WalletControllerTest {
                                                 BigDecimal.valueOf(5000)));
 
                 mockMvc.perform(post("/api/v1/wallet/withdraw")
-                                .header("X-User-Id", "1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                                 .andExpect(status().isBadRequest())
@@ -125,7 +122,6 @@ class WalletControllerTest {
                                 """;
 
                 mockMvc.perform(post("/api/v1/wallet/deposit")
-                                .header("X-User-Id", "1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(invalidRequest))
                                 .andExpect(status().isBadRequest());

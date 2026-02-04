@@ -2,12 +2,14 @@ package com.bootstrap.workshop.controller;
 
 import com.bootstrap.workshop.dto.TransactionRequest;
 import com.bootstrap.workshop.dto.TransactionResponse;
+import com.bootstrap.workshop.entity.User;
 import com.bootstrap.workshop.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,14 +32,10 @@ public class TransactionController {
      */
     @PostMapping
     public ResponseEntity<TransactionResponse> transfer(
-            @RequestHeader(value = "X-User-Id", required = false) Long userId,
+            @AuthenticationPrincipal User user,
             @Valid @RequestBody TransactionRequest request) {
-        // TODO: Get userId from JWT token in Phase 6
-        if (userId == null) {
-            userId = 1L;
-        }
-        log.info("Transfer {} to {} for user: {}", request.amount(), request.toWalletAddress(), userId);
-        TransactionResponse response = transactionService.transfer(userId, request);
+        log.info("Transfer {} to {} for user: {}", request.amount(), request.toWalletAddress(), user.getId());
+        TransactionResponse response = transactionService.transfer(user.getId(), request);
 
         if (response.status().name().equals("FAILED")) {
             return ResponseEntity.badRequest().body(response);
@@ -50,14 +48,9 @@ public class TransactionController {
      * GET /api/v1/transactions
      */
     @GetMapping
-    public ResponseEntity<List<TransactionResponse>> getHistory(
-            @RequestHeader(value = "X-User-Id", required = false) Long userId) {
-        // TODO: Get userId from JWT token in Phase 6
-        if (userId == null) {
-            userId = 1L;
-        }
-        log.info("Get transaction history for user: {}", userId);
-        List<TransactionResponse> transactions = transactionService.findByUserId(userId);
+    public ResponseEntity<List<TransactionResponse>> getHistory(@AuthenticationPrincipal User user) {
+        log.info("Get transaction history for user: {}", user.getId());
+        List<TransactionResponse> transactions = transactionService.findByUserId(user.getId());
         return ResponseEntity.ok(transactions);
     }
 

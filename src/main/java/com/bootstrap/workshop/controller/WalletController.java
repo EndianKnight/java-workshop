@@ -2,11 +2,13 @@ package com.bootstrap.workshop.controller;
 
 import com.bootstrap.workshop.dto.WalletOperationRequest;
 import com.bootstrap.workshop.dto.WalletResponse;
+import com.bootstrap.workshop.entity.User;
 import com.bootstrap.workshop.service.WalletService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -26,14 +28,9 @@ public class WalletController {
      * GET /api/v1/wallet
      */
     @GetMapping
-    public ResponseEntity<WalletResponse> getBalance(
-            @RequestHeader(value = "X-User-Id", required = false) Long userId) {
-        // TODO: Get userId from JWT token in Phase 6
-        if (userId == null) {
-            userId = 1L;
-        }
-        log.info("Get wallet balance for user: {}", userId);
-        WalletResponse response = walletService.getBalance(userId);
+    public ResponseEntity<WalletResponse> getBalance(@AuthenticationPrincipal User user) {
+        log.info("Get wallet balance for user: {}", user.getId());
+        WalletResponse response = walletService.getBalance(user.getId());
         return ResponseEntity.ok(response);
     }
 
@@ -43,14 +40,10 @@ public class WalletController {
      */
     @PostMapping("/deposit")
     public ResponseEntity<WalletResponse> deposit(
-            @RequestHeader(value = "X-User-Id", required = false) Long userId,
+            @AuthenticationPrincipal User user,
             @Valid @RequestBody WalletOperationRequest request) {
-        // TODO: Get userId from JWT token in Phase 6
-        if (userId == null) {
-            userId = 1L;
-        }
-        log.info("Deposit {} for user: {}", request.amount(), userId);
-        WalletResponse response = walletService.deposit(userId, request);
+        log.info("Deposit {} for user: {}", request.amount(), user.getId());
+        WalletResponse response = walletService.deposit(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -60,14 +53,10 @@ public class WalletController {
      */
     @PostMapping("/withdraw")
     public ResponseEntity<WalletResponse> withdraw(
-            @RequestHeader(value = "X-User-Id", required = false) Long userId,
+            @AuthenticationPrincipal User user,
             @Valid @RequestBody WalletOperationRequest request) {
-        // TODO: Get userId from JWT token in Phase 6
-        if (userId == null) {
-            userId = 1L;
-        }
-        log.info("Withdraw {} for user: {}", request.amount(), userId);
-        WalletResponse response = walletService.withdraw(userId, request);
+        log.info("Withdraw {} for user: {}", request.amount(), user.getId());
+        WalletResponse response = walletService.withdraw(user.getId(), request);
         return ResponseEntity.ok(response);
     }
 }

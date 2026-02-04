@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -38,6 +39,9 @@ class UserServiceTest {
 
     @Mock
     private WalletRepository walletRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserService userService;
@@ -80,6 +84,7 @@ class UserServiceTest {
         void shouldRegisterNewUserAndCreateWallet() {
             when(userRepository.existsByEmail(anyString())).thenReturn(false);
             when(walletRepository.existsByAddress(anyString())).thenReturn(false);
+            when(passwordEncoder.encode(anyString())).thenReturn("hashedPassword");
             when(userRepository.save(any(User.class))).thenReturn(testUser);
             when(walletRepository.save(any(Wallet.class))).thenReturn(testWallet);
 

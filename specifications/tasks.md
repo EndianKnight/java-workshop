@@ -9,9 +9,9 @@
 | `[!]` | Blocked |
 
 ## Restart Point
-**Last Updated:** 2026-02-04  
-**Current Focus:** Phase 6 - Security  
-**Next Task:** Implement Spring Security, JWT authentication, role-based access
+**Last Updated:** 2026-02-05  
+**Current Focus:** Phase 7 - Performance, Consistency & Observability  
+**Next Task:** Configure HikariCP, add metrics, integration tests
 
 ---
 
@@ -69,16 +69,17 @@
 
 ---
 
-## Current Sprint
+### Phase 6: Security ✅
+- [x] Spring Security config (`SecurityConfig`)
+- [x] JWT authentication (`JwtService`, `JwtAuthFilter`)
+- [x] Role-based access (USER, ADMIN)
+- [x] Password hashing (BCrypt)
+- [x] Custom test infrastructure (`MockUserArgumentResolver`)
+- [x] **All 85 tests passing**
 
-### Phase 6: Security
-- [ ] Spring Security config
-- [ ] JWT authentication
-- [ ] Role-based access (USER, ADMIN)
-- [ ] Password hashing (BCrypt)
-- [ ] **Unit Tests:**
-  - [ ] `SecurityConfigTest` - endpoint protection
-  - [ ] `JwtServiceTest` - token generation, validation, expiry
+---
+
+## Current Sprint
 
 ### Phase 7: Performance, Consistency & Observability
 - [ ] Configure HikariCP connection pool (50 connections)
@@ -118,3 +119,4 @@
 | 2026-02-03 | Phase 3: Entities, repositories, Flyway migrations, unit tests (44 tests) |
 | 2026-02-03 | Phase 4: Services, DTOs, exceptions, unit tests (71 total tests) |
 | 2026-02-04 | Phase 5: Controllers, GlobalExceptionHandler, controller tests (86 total tests) |
+| 2026-02-05 | Phase 6: Security - JWT, Spring Security, BCrypt, RBAC (85 tests passing) |

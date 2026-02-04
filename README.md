@@ -11,6 +11,7 @@ A **Spring Boot 4.1** digital wallet application with user management, transacti
 | 💰 **Wallet System** | Auto-created wallets with 16-char hex addresses |
 | 👤 **User/Admin APIs** | Role-based CRUD operations |
 | 💸 **Transactions** | P2P transfers with balance validation |
+| 🔐 **JWT Security** | Spring Security, BCrypt, role-based access |
 | 📊 **Full Observability** | Metrics, logs, traces at all layers |
 | 🔒 **Strong Consistency** | ACID transactions, pessimistic locking |
 | ⚡ **High Throughput** | 1000+ TPS, HikariCP pooling |
@@ -141,7 +142,7 @@ java-workshop/
 | Phase 3: Entity & Repository | ✅ Complete | Entities, repositories, migrations, 44 tests |
 | Phase 4: Service Layer | ✅ Complete | UserService, WalletService, TransactionService, 71 tests |
 | Phase 5: Controllers | ✅ Complete | REST endpoints, GlobalExceptionHandler, 86 tests |
-| **Phase 6: Security** | 🚧 Next | JWT, roles, BCrypt |
+| Phase 6: Security | ✅ Complete | JWT auth, Spring Security, BCrypt, RBAC, 85 tests |
 
 **Run tests**: `./run-tests.sh`
 

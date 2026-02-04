@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -25,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TransactionController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @Import(ControllerTestConfig.class)
 @DisplayName("TransactionController")
 class TransactionControllerTest {
@@ -54,7 +56,6 @@ class TransactionControllerTest {
                 when(transactionService.transfer(eq(1L), any())).thenReturn(response);
 
                 mockMvc.perform(post("/api/v1/transactions")
-                                .header("X-User-Id", "1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                                 .andExpect(status().isCreated())
@@ -78,7 +79,6 @@ class TransactionControllerTest {
                 when(transactionService.transfer(eq(1L), any())).thenReturn(response);
 
                 mockMvc.perform(post("/api/v1/transactions")
-                                .header("X-User-Id", "1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                                 .andExpect(status().isBadRequest())
@@ -101,8 +101,7 @@ class TransactionControllerTest {
 
                 when(transactionService.findByUserId(1L)).thenReturn(transactions);
 
-                mockMvc.perform(get("/api/v1/transactions")
-                                .header("X-User-Id", "1"))
+                mockMvc.perform(get("/api/v1/transactions"))
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.length()").value(2));
         }
@@ -134,7 +133,6 @@ class TransactionControllerTest {
                                 """;
 
                 mockMvc.perform(post("/api/v1/transactions")
-                                .header("X-User-Id", "1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(invalidRequest))
                                 .andExpect(status().isBadRequest());

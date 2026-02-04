@@ -11,6 +11,7 @@ import com.bootstrap.workshop.repository.UserRepository;
 import com.bootstrap.workshop.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
+    private final PasswordEncoder passwordEncoder;
     private final SecureRandom secureRandom = new SecureRandom();
 
     /**
@@ -42,11 +44,11 @@ public class UserService {
             throw new UserAlreadyExistsException(request.email());
         }
 
-        // Create user
+        // Create user with hashed password
         User user = new User(
                 request.email(),
                 request.name(),
-                request.password(), // TODO: Hash with BCrypt in security phase
+                passwordEncoder.encode(request.password()),
                 request.bank(),
                 request.accountId(),
                 request.address());

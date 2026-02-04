@@ -2,12 +2,16 @@ package com.bootstrap.workshop.controller;
 
 import com.bootstrap.workshop.dto.UserRegistrationRequest;
 import com.bootstrap.workshop.dto.UserResponse;
+import com.bootstrap.workshop.entity.User;
+import com.bootstrap.workshop.repository.UserRepository;
+import com.bootstrap.workshop.security.JwtService;
 import com.bootstrap.workshop.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -21,6 +25,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Register a new user and create their wallet.
@@ -36,15 +43,22 @@ public class AuthController {
     /**
      * Login and obtain JWT token.
      * POST /api/v1/auth/login
-     * Note: Full implementation with JWT in Phase 6 (Security)
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         log.info("Login request for email: {}", request.email());
-        // TODO: Implement JWT authentication in Phase 6
-        // For now, return a placeholder
-        UserResponse user = userService.findByEmail(request.email());
-        return ResponseEntity.ok(new LoginResponse("placeholder-token", user));
+
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
+        }
+
+        String token = jwtService.generateToken(user);
+        UserResponse userResponse = userService.findByEmail(request.email());
+
+        return ResponseEntity.ok(new LoginResponse(token, userResponse));
     }
 
     /**
