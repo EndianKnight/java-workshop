@@ -1,0 +1,52 @@
+target: all
+
+# Disable multi-tenancy for simple local use
+multitenancy_enabled: false
+
+server:
+  http_listen_port: 9009
+  grpc_listen_port: 9095
+
+common:
+  storage:
+    backend: filesystem
+    filesystem:
+      dir: /data/mimir
+
+blocks_storage:
+  backend: filesystem
+  filesystem:
+    dir: /data/mimir/blocks
+  tsdb:
+    dir: /data/mimir/tsdb
+  bucket_store:
+    sync_dir: /data/mimir/tsdb-sync
+
+# Check readiness of ingesters
+ingester:
+  ring:
+    replication_factor: 1
+
+# Alertmanager configuration (required even if unused)
+alertmanager:
+  data_dir: /data/mimir/alertmanager
+  fallback_config_file: /etc/alertmanager_fallback_config.yaml
+  external_url: http://localhost:9009/alertmanager
+
+# Compactor for long-term storage management
+compactor:
+  data_dir: /data/mimir/compactor
+  sharding_ring:
+    kvstore:
+      store: memberlist
+
+# Distributor configuration
+distributor:
+  ring:
+    kvstore:
+      store: memberlist
+
+# Store-gateway configuration
+store_gateway:
+  sharding_ring:
+    replication_factor: 1

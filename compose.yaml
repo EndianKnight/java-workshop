@@ -115,9 +115,21 @@ services:
       - loki
       - tempo
 
+  # Mimir - Long-term Metrics Storage
+  mimir:
+    image: grafana/mimir:latest
+    container_name: workshop-mimir
+    command: [ "-config.file=/etc/mimir.yaml" ]
+    ports:
+      - "9009:9009"
+    volumes:
+      - ./observability/mimir.yaml:/etc/mimir.yaml
+      - mimir_data:/data
+
 volumes:
   postgres_data:
   prometheus_data:
   grafana_data:
   loki_data:
   tempo_data:
+  mimir_data:

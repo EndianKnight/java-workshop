@@ -30,6 +30,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
     private final PasswordEncoder passwordEncoder;
+    private final io.micrometer.core.instrument.MeterRegistry meterRegistry;
     private final SecureRandom secureRandom = new SecureRandom();
 
     /**
@@ -62,6 +63,7 @@ public class UserService {
         user.setWallet(wallet);
 
         log.info("User registered successfully: id={}, walletAddress={}", user.getId(), walletAddress);
+        meterRegistry.counter("business.user.signup.success").increment();
 
         return toResponse(user);
     }

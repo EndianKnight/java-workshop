@@ -91,7 +91,9 @@
 - [ ] Configure structured JSON logging with traceId/spanId
 - [ ] Add custom metrics for wallet operations
 - [ ] Create database metrics dashboard
+- [ ] Create database metrics dashboard
 - [ ] Create transaction metrics dashboard
+- [x] Implement Mimir for long-term metrics storage
 
 ---
 

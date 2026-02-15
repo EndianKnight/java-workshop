@@ -29,6 +29,12 @@ class WalletRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @org.springframework.test.context.bean.override.mockito.MockitoBean(answers = org.mockito.Answers.RETURNS_DEEP_STUBS)
+    private io.micrometer.tracing.Tracer tracer;
+
+    @org.springframework.test.context.bean.override.mockito.MockitoBean(answers = org.mockito.Answers.RETURNS_DEEP_STUBS)
+    private io.micrometer.core.instrument.MeterRegistry meterRegistry;
+
     private User testUser;
     private Wallet testWallet;
 

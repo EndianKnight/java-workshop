@@ -98,7 +98,8 @@ flowchart TB
     
     B & C & D -.->|metrics/traces| F
     F --> G & H & I
-    G & H & I --> J
+    G --> K[Mimir]
+    G & H & I & K --> J
 ```
 
 ---
@@ -130,6 +131,7 @@ java-workshop/
 | workshop-loki | 3100 |
 | workshop-tempo | 3200 |
 | workshop-otel-collector | 4317/4318 |
+| workshop-mimir | 9009 |
 
 ---
 

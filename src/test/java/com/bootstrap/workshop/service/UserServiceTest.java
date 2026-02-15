@@ -43,6 +43,12 @@ class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private io.micrometer.core.instrument.MeterRegistry meterRegistry;
+
+    @Mock
+    private io.micrometer.core.instrument.Counter counter;
+
     @InjectMocks
     private UserService userService;
 
@@ -52,6 +58,9 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
+        lenient().when(meterRegistry.counter(anyString())).thenReturn(counter);
+        lenient().when(meterRegistry.counter(anyString(), anyString(), anyString())).thenReturn(counter);
+
         registrationRequest = new UserRegistrationRequest(
                 "test@example.com",
                 "Test User",
